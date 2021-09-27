@@ -32,6 +32,11 @@
   font-weight: bold;
   font-size: 1.2em;
 }
+.variable {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 1.2em;
+}
 </style>
 
 <script type="text/javascript">
@@ -62,25 +67,66 @@ function hexToRGB(hexColour) {
   ];
 }
 
+function RGBToLAB(rgb) {
+  // XXX: bogus implementation
+  return rgb;
+}
+
+function delta(tripletA, tripletB) {
+  return [
+    tripletA[0] - tripletB[0],
+    tripletA[1] - tripletB[1],
+    tripletA[2] - tripletB[2]
+  ];
+}
+
+function hypotenuse3D(tripletDelta) {
+  // 3D pythagoras: c² = √(x² + y² + z²)
+  return Math.sqrt(
+    Math.pow(tripletDelta[0], 2) +
+    Math.pow(tripletDelta[1], 2) +
+    Math.pow(tripletDelta[2], 2)
+  );
+}
+
+function recalculate(colourA, colourB) {
+  // make a copy of each so further changes to their value don't mess the maths
+  var aRGB = colourA.slice();
+  var bRGB = colourB.slice();
+  // convert both to LAB colour space
+  var aLAB = RGBToLAB(aRGB);
+  var bLAB = RGBToLAB(bRGB);
+  // get element-wise delta
+  var deltaLAB = delta(aLAB, bLAB);
+  // 3D hypotenuse of the delta is the cartesian distance between them
+  colourDistance = hypotenuse3D(deltaLAB);
+  document.querySelector("#colour-distance").innerHTML = colourDistance.toString();
+}
+
 function commitColour(event) {
+  // also update the label
+  updateLabel(event);
   switch (event.target.id) {
   case "colour-a":
     colourAVector = hexToRGB(event.target.value);
-    return;
+    break;
   case "colour-b":
     colourBVector = hexToRGB(event.target.value);
-    return;
+    break;
   default:
     console.error("commitColour() called with unexpected target element");
+    return;
   }
+  // if not unexpected target element, recalculate colour difference
+  recalculate(colourAVector, colourBVector);
 }
 
 function startup() {
   document.querySelector("#colour-distance").innerHTML = colourDistance.toString();
   colourASelector = document.querySelector("#colour-a");
   colourBSelector = document.querySelector("#colour-b");
-  colourASelector.addEventListener("input", updateLabel, false);
-  colourBSelector.addEventListener("input", updateLabel, false);
+  colourASelector.addEventListener("input", commitColour, false);
+  colourBSelector.addEventListener("input", commitColour, false);
   colourASelector.addEventListener("change", commitColour, false);
   colourBSelector.addEventListener("change", commitColour, false);
 }
@@ -102,7 +148,8 @@ window.addEventListener("load", startup, false);
         <input type="color" id="colour-a" name="colour-a" value="#123456">
         <span id="colour-a-hex" class="colour-hex-label">#123456</span>
       </label>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus pulvinar dui quis elementum mollis. Ut dictum id nisl in pellentesque. Aliquam viverra eros vitae magna tempor, a ultricies nisl molestie. In in eros odio. Nunc nec faucibus urna. Curabitur non tincidunt urna. Vivamus imperdiet lacus ac augue rutrum, a facilisis purus tempus. Duis vitae felis consectetur, consequat leo sit amet, sollicitudin erat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean ultrices porta metus, at vehicula diam tincidunt id. Cras ac eros nisl. Nunc convallis est non libero pretium, pharetra fringilla diam porttitor. Morbi at sollicitudin dolor, et gravida ante. Suspendisse interdum eros augue, quis finibus magna finibus sit amet. Ut porta, eros a convallis gravida, erat tortor varius erat, ac posuere felis mauris quis lectus. Vestibulum tristique nisi vel iaculis pharetra.</p>
+      <p>XYZ = <span id="colour-a-xyz" class="variable">???</span></p>
+      <p>LAB = <span id="colour-a-lab" class="variable">???</span></p>
     </div>
     <div id="colour-right" class="column">
       <label>
@@ -110,10 +157,12 @@ window.addEventListener("load", startup, false);
         <input type="color" id="colour-b" name="colour-b" value="#789abc">
         Colour B
       </label>
-      <p>Donec purus lectus, rhoncus at sollicitudin quis, finibus a nunc. Morbi finibus erat condimentum ante maximus sodales. Nulla at rhoncus eros, sed posuere felis. Vivamus quis diam fringilla, malesuada erat quis, tristique turpis. Ut in neque facilisis, placerat libero et, congue massa. Nulla facilisi. Suspendisse lacinia mi non tempor interdum. Suspendisse iaculis metus eu velit varius tristique. Integer porttitor iaculis lacus. Nunc placerat tincidunt justo, ut dignissim enim iaculis et. Etiam congue ultricies pulvinar. Sed scelerisque ante sed lacus consectetur elementum. Vestibulum eu lacus ultricies, consectetur risus vel, venenatis tortor.</p>
+      <p>XYZ = <span id="colour-b-xyz" class="variable">???</span></p>
+      <p>LAB = <span id="colour-b-lab" class="variable">???</span></p>
     </div>
     <div id="centre">
-      <p>Distance = <span id="colour-distance"></span></p>
+      <p>Distance = </p>
+      <p><span id="colour-distance"></span></p>
     </div>
   </div>
 </body>
