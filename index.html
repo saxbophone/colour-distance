@@ -1,12 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-GB">
 <head>
-<title>This is HTML file!</title>
+<title>Colour Distance</title>
+<style type="text/css">
+#container{
+  width: 640px;
+}
+.column {
+  margin: auto 10px;
+}
+#colour-left {
+  float: left;
+  width: 200px;
+}
+#colour-right {
+  float: right;
+  width: 200px;
+}
+#centre {
+  margin: 0 auto;
+  width: 240px;
+}
+.colour-hex-label {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+</style>
 </head>
 
 <body>
-  <h1>THIS IS HTML FILE!</h1>
-  <p>HTML FILE GOOD!</p>
+  <h1>Colour Distance</h1>
+  <hr/>
+  <p>
+    A tiny web app to calculate and display the "distance" between two colours
+  </p>
+  <div id="container">
+    <div id="colour-left" class="column">
+      <label>
+        Colour A
+        <input type="color" id="colour-a" name="colour-a" value="#e66465">
+        <span id="colour-a-hex" class="colour-hex-label">#xxxxx</span>
+      </label>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus pulvinar dui quis elementum mollis. Ut dictum id nisl in pellentesque. Aliquam viverra eros vitae magna tempor, a ultricies nisl molestie. In in eros odio. Nunc nec faucibus urna. Curabitur non tincidunt urna. Vivamus imperdiet lacus ac augue rutrum, a facilisis purus tempus. Duis vitae felis consectetur, consequat leo sit amet, sollicitudin erat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean ultrices porta metus, at vehicula diam tincidunt id. Cras ac eros nisl. Nunc convallis est non libero pretium, pharetra fringilla diam porttitor. Morbi at sollicitudin dolor, et gravida ante. Suspendisse interdum eros augue, quis finibus magna finibus sit amet. Ut porta, eros a convallis gravida, erat tortor varius erat, ac posuere felis mauris quis lectus. Vestibulum tristique nisi vel iaculis pharetra.</p>
+    </div>
+    <div id="colour-right" class="column">
+      <label>
+        <span id="colour-b-hex" class="colour-hex-label">#xxxxx</span>
+        <input type="color" id="colour-b" name="colour-b" value="#f6b73c">
+        Colour B
+      </label>
+      <p>Donec purus lectus, rhoncus at sollicitudin quis, finibus a nunc. Morbi finibus erat condimentum ante maximus sodales. Nulla at rhoncus eros, sed posuere felis. Vivamus quis diam fringilla, malesuada erat quis, tristique turpis. Ut in neque facilisis, placerat libero et, congue massa. Nulla facilisi. Suspendisse lacinia mi non tempor interdum. Suspendisse iaculis metus eu velit varius tristique. Integer porttitor iaculis lacus. Nunc placerat tincidunt justo, ut dignissim enim iaculis et. Etiam congue ultricies pulvinar. Sed scelerisque ante sed lacus consectetur elementum. Vestibulum eu lacus ultricies, consectetur risus vel, venenatis tortor.</p>
+    </div>
+    <div id="centre">
+      <p>In convallis, elit ut dapibus vestibulum, magna orci interdum velit, quis feugiat massa eros sit amet quam. Fusce porta augue ornare lobortis sollicitudin. Curabitur gravida turpis porttitor leo volutpat, nec laoreet metus tempus. Sed scelerisque condimentum eleifend. Vivamus nec bibendum diam, eget tristique dolor. Praesent ante nunc, ullamcorper ut pulvinar eget, volutpat eu mauris. Praesent volutpat nunc sed finibus scelerisque. Morbi tempus nisl lacus, sed imperdiet dolor convallis vel. Praesent egestas congue elit, a rhoncus nisi interdum et. Suspendisse tincidunt a mi sed pretium. Pellentesque aliquam, nisl a congue tristique, nibh leo scelerisque augue, non lacinia nibh dolor et metus. Cras id varius ipsum.</p>
+    </div>
+  </div>
 </body>
 
 </html>
