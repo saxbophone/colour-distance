@@ -1,3 +1,13 @@
+function RGBToLAB(rgbArr) {
+    // TODO: implement properly
+    return rgbArr.slice();
+}
+
+function LABToRGB(labArr) {
+    // TODO: implement properly
+    return labArr.slice();
+}
+
 class RGB {
     constructor(r, g, b) {
         this.red = r;
@@ -32,7 +42,9 @@ class RGB {
     }
 
     get lab() {
-        return new LAB(0, 0, 0);
+        // use module-private helper function to convert
+        let labArr = RGBToLAB([this.r, this.g, this.b]);
+        return new LAB(...labArr);
     }
 };
 
@@ -53,7 +65,9 @@ class LAB {
     }
 
     get rgb() {
-        return new RGB(0, 0, 0);
+        // use module-private helper function to convert
+        let rgbArr = LABToRGB([this.l, this.a, this.b]);
+        return new RGB(...rgbArr);
     }
 };
 
