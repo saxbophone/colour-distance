@@ -16,6 +16,12 @@ function updateRootColourDisplay() {
     document.querySelector('#root-colour-hex').innerHTML = rootColour;
 }
 
+function updateColourGridBorder() {
+    for (let td of document.querySelectorAll('#colour-board td')) {
+        td.style.borderColor = rootColour;
+    }
+}
+
 function updateDistanceDisplay() {
     document.querySelector('#distance-value').innerHTML = distance.toString();
 }
@@ -23,11 +29,13 @@ function updateDistanceDisplay() {
 function handleRootColourInput(event) {
     updateRootColour(event.target.value);
     updateRootColourDisplay();
+    updateColourGridBorder();
 }
 
 function handleRootColourChange(event) {
     updateRootColour(event.target.value);
     updateRootColourDisplay();
+    updateColourGridBorder();
 }
 
 function handleDistanceInput(event) {
@@ -64,6 +72,7 @@ function startup() {
     distance = parseInt(distanceElement.value);
     updateRootColourDisplay();
     updateDistanceDisplay();
+    updateColourGridBorder();
 }
 
 window.addEventListener('load', startup, false);
