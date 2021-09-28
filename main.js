@@ -1,28 +1,71 @@
+function updateRootColourDisplay() {
+    let rootColourElement = document.querySelector('#root-colour');
+    document.querySelector('#root-colour-hex').innerHTML = rootColourElement.value;
+}
+
+function updateDistanceDisplay() {
+    let distanceElement = document.querySelector('#distance');
+    document.querySelector('#distance-value').innerHTML = distanceElement.value;
+}
+
 function handleRootColourInput(event) {
-    console.log(`Root Colour Input "${event.target.value}"`);
+    /*
+     * hmmm, we ignore the event and do a query for the element value in the
+     * function call (even though we could get it from the event).
+     * Wasteful?
+     */
+    updateRootColourDisplay();
 }
 
 function handleRootColourChange(event) {
-    console.log(`Root Colour Change "${event.target.value}"`);
+    /*
+     * hmmm, we ignore the event and do a query for the element value in the
+     * function call (even though we could get it from the event).
+     * Wasteful?
+     */
+    updateRootColourDisplay();
 }
 
 function handleDistanceInput(event) {
-    console.log(`Distance Input "${event.target.value}"`);
+    /*
+     * hmmm, we ignore the event and do a query for the element value in the
+     * function call (even though we could get it from the event).
+     * Wasteful?
+     */
+    updateDistanceDisplay();
 }
 
 function handleDistanceChange(event) {
-    console.log(`Distance Change "${event.target.value}"`);
+    /*
+     * hmmm, we ignore the event and do a query for the element value in the
+     * function call (even though we could get it from the event).
+     * Wasteful?
+     */
+    updateDistanceDisplay();
 }
 
-function setupEventHandlers() {
+function haveJavaScript() {
+    // remove "no JavaScript" warning message
+    document.querySelector('#no-javascript').remove();
+}
+
+window.addEventListener('DOMContentLoaded', haveJavaScript, false);
+
+function startup() {
     // grab our two input elements
-    var rootColourElement = document.querySelector("#root-colour");
-    var distanceElement = document.querySelector("#distance");
+    let rootColourElement = document.querySelector('#root-colour');
+    let distanceElement = document.querySelector('#distance');
     // assign event handlers to their input and change events
     rootColourElement.addEventListener('input', handleRootColourInput, false);
     rootColourElement.addEventListener('change', handleRootColourChange, false);
     distanceElement.addEventListener('input', handleDistanceInput, false);
     distanceElement.addEventListener('change', handleDistanceChange, false);
+    // enable the input elements
+    rootColourElement.disabled = false;
+    distanceElement.disabled = false;
+    // update display of both inputs' values
+    updateRootColourDisplay();
+    updateDistanceDisplay();
 }
 
-window.addEventListener('load', setupEventHandlers, false);
+window.addEventListener('load', startup, false);

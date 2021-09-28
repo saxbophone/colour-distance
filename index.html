@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 <title>Colour Distance</title>
 <style type="text/css">
 #colour-board {
-  border: 0.5em solid black;
+  border: 0.5em solid grey;
 }
 #colour-board td {
   border: 0.5em solid;
@@ -56,11 +56,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     specified colour, if there are any.
   </p>
   <p id="colour-picker">
-      <input type="color" id="root-colour" value="#123456">
+      <input type="color" id="root-colour" disabled value="#123456">
       <span id="root-colour-hex" class="variable">#??????</span>
       &nbsp;
-      <input type="range" id="distance" min="0" max="411">
+      <input type="range" id="distance" disabled min="0" max="411">
       <span id="distance-value" class="variable">NaN</span>
+      <br/>
+      <span id="no-javascript" class="variable">This app requires JavaScript</span>
   </p>
   <p>
     <table id="colour-board">
