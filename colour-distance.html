@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<!-- 
+Colour Distance
+Copyright (C) 2021 Joshua Saxby
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, version 3 of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License v3
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="en-GB">
+<head>
+<title>Colour Distance</title>
+<style type="text/css">
+#container{
+  width: 640px;
+}
+.column {
+  margin: auto 10px;
+}
+#colour-left {
+  float: left;
+  width: 200px;
+}
+#colour-right {
+  float: right;
+  width: 200px;
+}
+#centre {
+  margin: 0 auto;
+  width: 240px;
+  text-align: center;
+}
+.colour-hex-label {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+#colour-distance {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+.variable {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+#version {
+  text-align: left;
+  margin: 1px auto;
+  font-family: monospace;
+}
+</style>
+
+<script type="text/javascript">
+var colourASelector = null;
+var colourBSelector = null;
+var colourDistance = NaN;
+var colourAVector = [0, 0, 0];
+var colourBVector = [0, 0, 0];
+
+function updateLabel(event) {
+  switch (event.target.id) {
+  case "colour-a":
+    document.querySelector("#colour-a-hex").innerHTML = event.target.value;
+    return;
+  case "colour-b":
+    document.querySelector("#colour-b-hex").innerHTML = event.target.value;
+    return;
+  default:
+    console.error("updateLabel() called with unexpected target element");
+  }
+}
+
+function hexToRGB(hexColour) {
+  return [
+    parseInt(hexColour.substring(1, 3), 16),
+    parseInt(hexColour.substring(3, 5), 16),
+    parseInt(hexColour.substring(5, 7), 16),
+  ];
+}
+
+// XXX: modifies its input!
+function scaleDownRGB(rgb) {
+  rgb[0] /= 255;
+  rgb[1] /= 255;
+  rgb[2] /= 255;
+}
+
+function convertRGBForXYZ(c) {
+  return (c > 0.04045) ? Math.pow((c + 0.055) / 1.055, 2.4) : (c / 12.92);
+}
+
+function RGBToXYZ(rgb) {
+  var input = rgb.slice(); // copy as we modify in-function
+  scaleDownRGB(input); // scale down each RGB channel
+  // translate each channel
+  input[0] = convertRGBForXYZ(input[0]) * 100; // r
+  input[1] = convertRGBForXYZ(input[1]) * 100; // g
+  input[2] = convertRGBForXYZ(input[2]) * 100; // b
+  // apply matrix transforms
+  return [
+    input[0] * 0.4124 + input[1] * 0.3576 + input[2] * 0.1805,
+    input[0] * 0.2126 + input[1] * 0.7152 + input[2] * 0.0722,
+    input[0] * 0.0193 + input[1] * 0.1192 + input[2] * 0.9505,
+  ];
+}
+
+function convertXYZForLAB(c) {
+  // converted component needs the cube root of input if over a given size
+  return (c > 0.008856) ? Math.pow(c, (1.0 / 3)) : (7.787 * c) + (16.0 / 116);
+}
+
+function XYZToLAB(xyz) {
+  var input = xyz.slice(); // copy for further use
+  // skew and convert input values
+  const XYZ_X_REF_VALUE = 95.047;
+  const XYZ_Y_REF_VALUE = 100.0;
+  const XYZ_Z_REF_VALUE = 108.883;
+  input[0] = convertXYZForLAB(input[0] / XYZ_X_REF_VALUE);
+  input[1] = convertXYZForLAB(input[1] / XYZ_Y_REF_VALUE);
+  input[2] = convertXYZForLAB(input[2] / XYZ_Z_REF_VALUE);
+  // convert to LAB ranges
+  return [
+      (116 * input[1]) - 16,
+      500 * (input[0] - input[1]),
+      200 * (input[1] - input[2]),
+  ];
+}
+
+function delta(tripletA, tripletB) {
+  return [
+    tripletA[0] - tripletB[0],
+    tripletA[1] - tripletB[1],
+    tripletA[2] - tripletB[2],
+  ];
+}
+
+function hypotenuse3D(tripletDelta) {
+  // 3D pythagoras: c² = √(x² + y² + z²)
+  return Math.sqrt(
+    Math.pow(tripletDelta[0], 2) +
+    Math.pow(tripletDelta[1], 2) +
+    Math.pow(tripletDelta[2], 2)
+  );
+}
+
+function recalculate(colourA, colourB) {
+  // make a copy of each so further changes to their value don't mess the maths
+  var aRGB = colourA.slice();
+  var bRGB = colourB.slice();
+  // convert both to XYZ colour space
+  var aXYZ = RGBToXYZ(aRGB);
+  var bXYZ = RGBToXYZ(bRGB);
+  // update XYZ labels
+  document.querySelector("#colour-a-xyz").innerHTML = aXYZ.toString().replaceAll(",", "<br/>");
+  document.querySelector("#colour-b-xyz").innerHTML = bXYZ.toString().replaceAll(",", "<br/>");
+  // convert both to LAB colour space
+  var aLAB = XYZToLAB(aXYZ);
+  var bLAB = XYZToLAB(bXYZ);
+  // update LAB labels
+  document.querySelector("#colour-a-lab").innerHTML = aLAB.toString().replaceAll(",", "<br/>");
+  document.querySelector("#colour-b-lab").innerHTML = bLAB.toString().replaceAll(",", "<br/>");
+  // get element-wise delta
+  var deltaLAB = delta(aLAB, bLAB);
+  // 3D hypotenuse of the delta is the cartesian distance between them
+  colourDistance = hypotenuse3D(deltaLAB);
+  document.querySelector("#colour-distance").innerHTML = colourDistance.toString();
+}
+
+function commitColour(event) {
+  // also update the label
+  updateLabel(event);
+  switch (event.target.id) {
+  case "colour-a":
+    colourAVector = hexToRGB(event.target.value);
+    break;
+  case "colour-b":
+    colourBVector = hexToRGB(event.target.value);
+    break;
+  default:
+    console.error("commitColour() called with unexpected target element");
+    return;
+  }
+  // if not unexpected target element, recalculate colour difference
+  recalculate(colourAVector, colourBVector);
+}
+
+function startup() {
+  document.querySelector("#colour-distance").innerHTML = colourDistance.toString();
+  colourASelector = document.querySelector("#colour-a");
+  colourBSelector = document.querySelector("#colour-b");
+  colourASelector.addEventListener("input", commitColour, false);
+  colourBSelector.addEventListener("input", commitColour, false);
+  colourASelector.addEventListener("change", commitColour, false);
+  colourBSelector.addEventListener("change", commitColour, false);
+}
+
+window.addEventListener("load", startup, false);
+</script>
+</head>
+
+<body>
+  <h1>Colour Distance</h1>
+  <p id="version">Version 0.0.1</p>
+  <hr/>
+  <p>
+    A tiny web app to calculate and display the "distance" between two colours
+  </p>
+  <div id="container">
+    <div id="colour-left" class="column">
+      <p>XYZ = <br/><span id="colour-a-xyz" class="variable">???</span></p>
+      <p>LAB = <br/><span id="colour-a-lab" class="variable">???</span></p>
+      <label>
+        Colour A
+        <input type="color" id="colour-a" name="colour-a" value="#123456">
+        <span id="colour-a-hex" class="colour-hex-label">#123456</span>
+      </label>
+    </div>
+    <div id="colour-right" class="column">
+      <p>XYZ = <br/><span id="colour-b-xyz" class="variable">???</span></p>
+      <p>LAB = <br/><span id="colour-b-lab" class="variable">???</span></p>
+      <label>
+        <span id="colour-b-hex" class="colour-hex-label">#789abc</span>
+        <input type="color" id="colour-b" name="colour-b" value="#789abc">
+        Colour B
+      </label>
+    </div>
+    <div id="centre">
+      <p>Distance = </p>
+      <p><span id="colour-distance"></span></p>
+    </div>
+  </div>
+</body>
+
+</html>
