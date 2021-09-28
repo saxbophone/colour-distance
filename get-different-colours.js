@@ -1,3 +1,5 @@
+import { RGB, LAB } from './colour-spaces.js';
+
 /*
  * @param c Colour to get colours different from
  * @param d Distance from c that returned colours should be
@@ -10,6 +12,10 @@
 export default function(c, d, n) {
     // copy input colour
     let rootColour = `${c}`;
-    // XXX: dummy code
-    return Array(n).fill(rootColour);
+    let rgb = RGB.fromString(rootColour);
+    // convert to LAB
+    let lab = rgb.lab;
+    // XXX: convert back to RGB
+    let outColour = lab.rgb.toString();
+    return Array(n).fill(outColour);
 }

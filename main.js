@@ -1,4 +1,4 @@
-import {default as getDifferentColours} from './get-different-colours.js';
+import { default as getDifferentColours } from './get-different-colours.js';
 
 // these global variables track our input state
 var rootColour = ''; // hex colour string
