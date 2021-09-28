@@ -157,10 +157,15 @@ class RGB {
 };
 
 class LAB {
+    static get L_MIN_VALUE() { return 0; }
+    static get L_MAX_VALUE() { return 100; }
+    static get AB_MIN_VALUE() { return -128; }
+    static get AB_MAX_VALUE() { return 128; }
+
     constructor(l, a, b) {
-        this.lightness = l;
-        this.aComponent = a;
-        this.bComponent = b;
+        this.lightness = Math.min(LAB.L_MAX_VALUE, Math.max(LAB.L_MIN_VALUE, l));
+        this.aComponent = Math.min(LAB.AB_MAX_VALUE, Math.max(LAB.AB_MIN_VALUE, a));
+        this.bComponent = Math.min(LAB.AB_MAX_VALUE, Math.max(LAB.AB_MIN_VALUE, b));
     }
 
     get l() { return this.lightness; }
