@@ -53,14 +53,17 @@ function colourInRange(l, a, b) {
     );
 }
 
+// prevents lock-ups in case never find any rays
+const GIVE_UP_AFTER = 750; // double the theoretical maximum distance
+
 /*
  * @param c Colour to get colours different from
  * @param d Distance from c that returned colours should be
  * @param n Number of colours to return, if possible
  * @returns null when there are no colours in range that satisfy distance d from
  * colour C
- * @returns array of 16 values, any of which can be either a string describing
- * a colour or undefined, when there are colours in range.
+ * @returns array of values of length 0..n, with any values being string CSS
+ * RGB hex colours. If length of array is 0, no colours were found before giving up.
  */
 export default function(c, d, n) {
     // copy input colour
@@ -76,28 +79,25 @@ export default function(c, d, n) {
      * cast n many rays from c with distance d
      * --all rays that land in valid places are our colours
      */
-    let differentColours = Array(n).fill(undefined);
+    let differentColours = new Set();
     /*
      * seed the MPRNG to the same value so we know the results will be the same
      * for repeat occurences of the same inputs
      */
     srand(0);
-    // prevents lock-ups in case never find any rays
-    let tries = 0;
-    const GIVE_UP_AFTER = 100;
     for (let i = 0; i < n; i++) {
         let target = null;
+        let tries = 0;
         do {
             // bail if run for too long
             if (tries >= GIVE_UP_AFTER) {
-                return differentColours;
+                break;
             }
             // keep trying until we cast a ray to a colour that is in range
             let theta = pickRandom(0, Math.PI);
             let phi = pickRandom(-Math.PI, Math.PI);
             // get ray as xyz delta
             let ray = sphericalToCartesian(d, theta, phi);
-            console.log(ray);
             // translate colour along this delta into target
             target = [
                 lab.l + ray.x,
@@ -107,10 +107,8 @@ export default function(c, d, n) {
             tries++;
         } while (!colourInRange(...target));
         // if we reached here, target is a valid colour. convert to rgb string
-        differentColours[i] = new LAB(...target).rgb.toString();
+        differentColours.add(new LAB(...target).rgb.toString());
     }
-    // XXX: convert back to RGB
-    // let outColour = lab.rgb.toString();
-    // return Array(n).fill(outColour);
-    return differentColours;
+    // unpack set into array
+    return [...differentColours];
 }

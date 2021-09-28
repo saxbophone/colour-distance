@@ -113,6 +113,7 @@ function startup() {
     updateRootColourDisplay();
     updateDistanceDisplay();
     updateColourGridBorder();
+    updateColourGrid();
 }
 
 window.addEventListener('load', startup, false);
