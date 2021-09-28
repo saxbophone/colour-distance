@@ -26,6 +26,21 @@ function updateDistanceDisplay() {
     document.querySelector('#distance-value').innerHTML = distance.toString();
 }
 
+function lockInputs() {
+    document.querySelector('#root-colour').disabled = true;
+    document.querySelector('#distance').disabled = true;
+}
+
+function unlockInputs() {
+    setTimeout(
+        function() {
+            document.querySelector('#root-colour').disabled = false;
+            document.querySelector('#distance').disabled = false;
+        },
+        300
+    );
+}
+
 function handleRootColourInput(event) {
     updateRootColour(event.target.value);
     updateRootColourDisplay();
@@ -33,9 +48,11 @@ function handleRootColourInput(event) {
 }
 
 function handleRootColourChange(event) {
+    lockInputs();
     updateRootColour(event.target.value);
     updateRootColourDisplay();
     updateColourGridBorder();
+    unlockInputs();
 }
 
 function handleDistanceInput(event) {
@@ -44,8 +61,10 @@ function handleDistanceInput(event) {
 }
 
 function handleDistanceChange(event) {
+    lockInputs();
     updateDistance(event.target.value);
     updateDistanceDisplay();
+    unlockInputs();
 }
 
 function haveJavaScript() {
@@ -65,8 +84,7 @@ function startup() {
     distanceElement.addEventListener('input', handleDistanceInput, false);
     distanceElement.addEventListener('change', handleDistanceChange, false);
     // enable the input elements
-    rootColourElement.disabled = false;
-    distanceElement.disabled = false;
+    unlockInputs();
     // update display of both inputs' values
     rootColour = rootColourElement.value;
     distance = parseInt(distanceElement.value);
