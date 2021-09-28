@@ -48,14 +48,12 @@ function XYZToLAB(xyz) {
 
 function RGBToLAB(rgbArr) {
     // convert via XYZ as an intermediate
-    // console.log(rgbArr);
     let xyzArr = RGBToXYZ(rgbArr);
     let labArr = XYZToLAB(xyzArr);
-    // console.log(labArr);
     return labArr;
 }
 
-// private helper function for colrcv_lab_to_xyz
+// private helper function for LABToXYZ
 function convertLABForXYZ(c) {
     // get c cubed
     let cCubed = Math.pow(c, 3);
