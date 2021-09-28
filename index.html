@@ -27,10 +27,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   /* wide and tall enough for #xxxxxx hex colour code */
   width: 7em;
   height: 7em;
+  text-align: center;
 }
 .empty-colour-square {
   background-image: linear-gradient(45deg, #888888 50%, #cccccc 50%);
   background-size: 0.5em 0.5em;
+}
+/*
+ * set some text with "difference" color effect applied so it
+ * stands out from the background colour
+ */
+#colour-board td p {
+  mix-blend-mode: difference;
+  color: white;
 }
 #colour-picker {
   float: left;
@@ -64,28 +73,28 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   <p>
     <table id="colour-board">
       <tr>
-        <td id="derived-colour-0" class="empty-colour-square"></td>
-        <td id="derived-colour-1" class="empty-colour-square"></td>
-        <td id="derived-colour-2" class="empty-colour-square"></td>
-        <td id="derived-colour-3" class="empty-colour-square"></td>
+        <td id="derived-colour-0" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-1" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-2" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-3" class="empty-colour-square"><p class="variable"></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-4" class="empty-colour-square"></td>
-        <td id="derived-colour-5" class="empty-colour-square"></td>
-        <td id="derived-colour-6" class="empty-colour-square"></td>
-        <td id="derived-colour-7" class="empty-colour-square"></td>
+        <td id="derived-colour-4" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-5" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-6" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-7" class="empty-colour-square"><p class="variable"></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-8" class="empty-colour-square"></td>
-        <td id="derived-colour-9" class="empty-colour-square"></td>
-        <td id="derived-colour-10" class="empty-colour-square"></td>
-        <td id="derived-colour-11" class="empty-colour-square"></td>
+        <td id="derived-colour-8" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-9" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-10" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-11" class="empty-colour-square"><p class="variable"></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-12" class="empty-colour-square"></td>
-        <td id="derived-colour-13" class="empty-colour-square"></td>
-        <td id="derived-colour-14" class="empty-colour-square"></td>
-        <td id="derived-colour-15" class="empty-colour-square"></td>
+        <td id="derived-colour-12" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-13" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-14" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-15" class="empty-colour-square"><p class="variable"></p></td>
       </tr>
     </table>
   </p>

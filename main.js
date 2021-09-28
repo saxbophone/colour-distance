@@ -36,6 +36,33 @@ function unlockInputs() {
     document.querySelector('#distance').disabled = false;
 }
 
+function updateColourGrid() {
+    // TODO: do calculations here
+    // TODO: update grid colours here
+    // XXX: dummy implementation generates set colours
+    let colours = [
+        '#123456', '#f012f0', '#33f313', '#6278a1', '#6dbbef', rootColour,
+        ,,,,,,,,,,
+    ];
+    // XXX: this relies upon colours having 16 elements as well as the table
+    for (let i = 0; i < 16; i++) {
+        let td = document.querySelector(`#derived-colour-${i.toString()}`);
+        if (colours[i] && colours[i] != '#ff0000') {
+            // disable placeholder background colour
+            td.classList.toggle('empty-colour-square', false);
+            // set background colour
+            td.style.backgroundColor = colours[i];
+            // set colour name text
+            td.firstElementChild.innerHTML = colours[i];
+        } else {
+            // enable placeholder background colour
+            td.classList.toggle('empty-colour-square', true);
+            // clear colour name text
+            td.firstElementChild.innerHTML = '';
+        }
+    }
+}
+
 function handleRootColourInput(event) {
     updateRootColour(event.target.value);
     updateRootColourDisplay();
@@ -47,6 +74,7 @@ function handleRootColourChange(event) {
     updateRootColour(event.target.value);
     updateRootColourDisplay();
     updateColourGridBorder();
+    updateColourGrid();
     unlockInputs();
 }
 
@@ -59,6 +87,7 @@ function handleDistanceChange(event) {
     lockInputs();
     updateDistance(event.target.value);
     updateDistanceDisplay();
+    updateColourGrid();
     unlockInputs();
 }
 
