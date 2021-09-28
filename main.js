@@ -32,13 +32,8 @@ function lockInputs() {
 }
 
 function unlockInputs() {
-    setTimeout(
-        function() {
-            document.querySelector('#root-colour').disabled = false;
-            document.querySelector('#distance').disabled = false;
-        },
-        300
-    );
+    document.querySelector('#root-colour').disabled = false;
+    document.querySelector('#distance').disabled = false;
 }
 
 function handleRootColourInput(event) {
