@@ -1,46 +1,42 @@
+// these global variables track our input state
+var rootColour = ''; // hex colour string
+var distance = NaN; // number
+
+function updateRootColour(colour) {
+    // TODO: validation
+    rootColour = colour;
+}
+
+function updateDistance(d) {
+    // TODO: validation
+    distance = parseInt(d);
+}
+
 function updateRootColourDisplay() {
-    let rootColourElement = document.querySelector('#root-colour');
-    document.querySelector('#root-colour-hex').innerHTML = rootColourElement.value;
+    document.querySelector('#root-colour-hex').innerHTML = rootColour;
 }
 
 function updateDistanceDisplay() {
-    let distanceElement = document.querySelector('#distance');
-    document.querySelector('#distance-value').innerHTML = distanceElement.value;
+    document.querySelector('#distance-value').innerHTML = distance.toString();
 }
 
 function handleRootColourInput(event) {
-    /*
-     * hmmm, we ignore the event and do a query for the element value in the
-     * function call (even though we could get it from the event).
-     * Wasteful?
-     */
+    updateRootColour(event.target.value);
     updateRootColourDisplay();
 }
 
 function handleRootColourChange(event) {
-    /*
-     * hmmm, we ignore the event and do a query for the element value in the
-     * function call (even though we could get it from the event).
-     * Wasteful?
-     */
+    updateRootColour(event.target.value);
     updateRootColourDisplay();
 }
 
 function handleDistanceInput(event) {
-    /*
-     * hmmm, we ignore the event and do a query for the element value in the
-     * function call (even though we could get it from the event).
-     * Wasteful?
-     */
+    updateDistance(event.target.value);
     updateDistanceDisplay();
 }
 
 function handleDistanceChange(event) {
-    /*
-     * hmmm, we ignore the event and do a query for the element value in the
-     * function call (even though we could get it from the event).
-     * Wasteful?
-     */
+    updateDistance(event.target.value);
     updateDistanceDisplay();
 }
 
@@ -64,6 +60,8 @@ function startup() {
     rootColourElement.disabled = false;
     distanceElement.disabled = false;
     // update display of both inputs' values
+    rootColour = rootColourElement.value;
+    distance = parseInt(distanceElement.value);
     updateRootColourDisplay();
     updateDistanceDisplay();
 }
