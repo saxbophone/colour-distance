@@ -63,28 +63,30 @@ function handleRootColourInput(event) {
     updateRootColour(event.target.value);
     updateRootColourDisplay();
     updateColourGridBorder();
+    updateColourGrid();
 }
 
 function handleRootColourChange(event) {
-    lockInputs();
+    // lockInputs();
     updateRootColour(event.target.value);
     updateRootColourDisplay();
     updateColourGridBorder();
     updateColourGrid();
-    unlockInputs();
+    // unlockInputs();
 }
 
 function handleDistanceInput(event) {
     updateDistance(event.target.value);
     updateDistanceDisplay();
+    updateColourGrid();
 }
 
 function handleDistanceChange(event) {
-    lockInputs();
+    // lockInputs();
     updateDistance(event.target.value);
     updateDistanceDisplay();
     updateColourGrid();
-    unlockInputs();
+    // unlockInputs();
 }
 
 function haveJavaScript() {
