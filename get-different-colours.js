@@ -106,8 +106,10 @@ export default function(c, d, n) {
             ];
             tries++;
         } while (!colourInRange(...target));
-        // if we reached here, target is a valid colour. convert to rgb string
-        differentColours.add(new LAB(...target).rgb.toString());
+        // if target is a valid colour, convert to rgb string
+        if (target) {
+            differentColours.add(new LAB(...target).rgb.toString());
+        }
     }
     // unpack set into array
     return [...differentColours];
