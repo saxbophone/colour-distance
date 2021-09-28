@@ -47,7 +47,7 @@ function updateColourGrid() {
     // XXX: this relies upon colours having 16 elements as well as the table
     for (let i = 0; i < 16; i++) {
         let td = document.querySelector(`#derived-colour-${i.toString()}`);
-        if (colours[i] && colours[i] != '#ff0000') {
+        if (colours[i]) {
             // disable placeholder background colour
             td.classList.toggle('empty-colour-square', false);
             // set background colour
