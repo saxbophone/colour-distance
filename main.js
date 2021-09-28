@@ -1,3 +1,5 @@
+import {default as getDifferentColours} from './get-different-colours.js';
+
 // these global variables track our input state
 var rootColour = ''; // hex colour string
 var distance = NaN; // number
@@ -37,13 +39,7 @@ function unlockInputs() {
 }
 
 function updateColourGrid() {
-    // TODO: do calculations here
-    // TODO: update grid colours here
-    // XXX: dummy implementation generates set colours
-    let colours = [
-        '#123456', '#f012f0', '#33f313', '#6278a1', '#6dbbef', rootColour,
-        ,,,,,,,,,,
-    ];
+    let colours = getDifferentColours(rootColour, NaN, 16);
     // XXX: this relies upon colours having 16 elements as well as the table
     for (let i = 0; i < 16; i++) {
         let td = document.querySelector(`#derived-colour-${i.toString()}`);
