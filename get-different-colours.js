@@ -73,19 +73,16 @@ function colourInRange(l, a, b) {
 // prevents lock-ups in case never find any rays
 const GIVE_UP_AFTER = 750; // double the theoretical maximum distance
 
-function* coordsGenerator(t, p) {
-    // the north pole
-    yield [0, 0];
-    // theta has half the range of phi, work out how many divisions each
-    // points on the globe sampled to z many divisions per angle
-    for (let phi = 0; phi < p; phi++) {
-        // we can ignore position 0 and p for phi (north and south poles)
-        for (let theta = 1; theta <= t; theta++) {
-            yield [theta / (t + 1) * Math.PI, -Math.PI + (phi / p * Math.PI * 2)];
-        }
+// Source:
+// http://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/#more-3069
+// picks n equidistant points on the face of a sphere
+function* coordsGenerator(n) {
+    let goldenRatio = (1 + Math.pow(5, 0.5)) / 2;
+    for (let i = 0; i < n; i++) {
+        let theta = 2 * Math.PI * i / goldenRatio;
+        let phi = Math.acos(1 - 2 * (i + 0.5) / n);
+        yield [theta, phi];
     }
-    // the south pole
-    yield [Math.PI, 0];
 }
 
 function randomCoords() {
@@ -96,15 +93,13 @@ function randomCoords() {
 /*
  * @param c Colour to get colours different from
  * @param d Distance from c that returned colours should be
- * @param thetaDiv how many theta divisions to use
- * @param phiDiv how many phi divisions to use
+ * @param n how many colours to generate
  * @returns null when there are no colours in range that satisfy distance d from
  * colour C
- * @note Denote total output size z = thetaDiv * phiDiv + 2
- * @returns array of values of length 0..z, with any values being string CSS
+ * @returns array of values of length 0..n, with any values being string CSS
  * RGB hex colours. If length of array is 0, no colours were found before giving up.
  */
-export default function(c, d, thetaDiv, phiDiv) {
+export default function(c, d, n) {
     // copy input colour
     let rootColour = `${c}`;
     let rgb = RGB.fromString(rootColour);
@@ -119,7 +114,7 @@ export default function(c, d, thetaDiv, phiDiv) {
      * cast rays from c with distance d
      * --all rays that land in valid places are our colours
      */
-    for (let [theta, phi] of coordsGenerator(thetaDiv, phiDiv)) {
+    for (let [theta, phi] of coordsGenerator(n)) {
         // get ray as xyz delta
         let ray = sphericalToCartesian(d, theta, phi);
         // translate colour along this delta into target
@@ -140,7 +135,7 @@ export default function(c, d, thetaDiv, phiDiv) {
     let tries = 0;
     // seed MPRNG for repeatable "random" results
     srand(0);
-    while (differentColours.size < (thetaDiv * phiDiv + 2)) {
+    while (differentColours.size < n) {
         let [theta, phi] = randomCoords();
         // get ray as xyz delta
         let ray = sphericalToCartesian(d, theta, phi);
