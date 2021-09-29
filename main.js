@@ -17,6 +17,9 @@
 
 import { default as getDifferentColours } from './get-different-colours.js';
 
+const gridThetaDivisions = 3;
+const gridPhiDivisions = 6;
+const gridSize = gridThetaDivisions * gridPhiDivisions + 2;
 // these global variables track our input state
 var rootColour = ''; // hex colour string
 var distance = NaN; // number
@@ -56,9 +59,9 @@ function unlockInputs() {
 }
 
 function updateColourGrid() {
-    let colours = getDifferentColours(rootColour, distance, 16);
-    // XXX: this relies upon colours having 16 elements as well as the table
-    for (let i = 0; i < 16; i++) {
+    let colours = getDifferentColours(rootColour, distance, gridThetaDivisions, gridPhiDivisions);
+    // XXX: this relies upon colours having gridSize elements as well as the table
+    for (let i = 0; i < gridSize; i++) {
         let td = document.querySelector(`#derived-colour-${i.toString()}`);
         if (colours != null && colours[i]) {
             // disable placeholder background colour
