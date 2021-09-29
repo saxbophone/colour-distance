@@ -73,16 +73,38 @@ function colourInRange(l, a, b) {
 // prevents lock-ups in case never find any rays
 const GIVE_UP_AFTER = 750; // double the theoretical maximum distance
 
+function* coordsGenerator(t, p) {
+    // the north pole
+    yield [0, 0];
+    // theta has half the range of phi, work out how many divisions each
+    // points on the globe sampled to z many divisions per angle
+    for (let phi = 0; phi < p; phi++) {
+        // we can ignore position 0 and p for phi (north and south poles)
+        for (let theta = 1; theta <= t; theta++) {
+            yield [theta / (t + 1) * Math.PI, -Math.PI + (phi / p * Math.PI * 2)];
+        }
+    }
+    // the south pole
+    yield [Math.PI, 0];
+}
+
+function randomCoords() {
+    // pick "random" co-ords
+    return [rand() / RAND_MAX * Math.PI, -Math.PI + (rand() / RAND_MAX * Math.PI * 2)];
+}
+
 /*
  * @param c Colour to get colours different from
  * @param d Distance from c that returned colours should be
- * @param n Number of colours to return, if possible
+ * @param thetaDiv how many theta divisions to use
+ * @param phiDiv how many phi divisions to use
  * @returns null when there are no colours in range that satisfy distance d from
  * colour C
- * @returns array of values of length 0..n, with any values being string CSS
+ * @note Denote total output size z = thetaDiv * phiDiv + 2
+ * @returns array of values of length 0..z, with any values being string CSS
  * RGB hex colours. If length of array is 0, no colours were found before giving up.
  */
-export default function(c, d, n) {
+export default function(c, d, thetaDiv, phiDiv) {
     // copy input colour
     let rootColour = `${c}`;
     let rgb = RGB.fromString(rootColour);
@@ -92,40 +114,49 @@ export default function(c, d, n) {
     if (!distanceAchievable(lab, d)) {
         return null;
     }
-    /*
-     * cast n many rays from c with distance d
-     * --all rays that land in valid places are our colours
-     */
     let differentColours = new Set();
     /*
-     * seed the MPRNG to the same value so we know the results will be the same
-     * for repeat occurences of the same inputs
+     * cast rays from c with distance d
+     * --all rays that land in valid places are our colours
      */
-    srand(0);
-    for (let i = 0; i < n; i++) {
-        let target = null;
-        let tries = 0;
-        do {
-            // bail if run for too long
-            if (tries >= GIVE_UP_AFTER) {
-                break;
-            }
-            // keep trying until we cast a ray to a colour that is in range
-            let theta = pickRandom(0, Math.PI);
-            let phi = pickRandom(-Math.PI, Math.PI);
-            // get ray as xyz delta
-            let ray = sphericalToCartesian(d, theta, phi);
-            // translate colour along this delta into target
-            target = [
-                lab.l + ray.x,
-                lab.a + ray.y,
-                lab.b + ray.z
-            ];
-            tries++;
-        } while (!colourInRange(...target));
-        // if target is a valid colour, convert to rgb string
-        if (target) {
+    for (let [theta, phi] of coordsGenerator(thetaDiv, phiDiv)) {
+        // get ray as xyz delta
+        let ray = sphericalToCartesian(d, theta, phi);
+        // translate colour along this delta into target
+        let target = [
+            lab.l + ray.x,
+            lab.a + ray.y,
+            lab.b + ray.z
+        ];
+        if (colourInRange(...target)) {
             differentColours.add(new LAB(...target).rgb.toString());
+        }
+    }
+    /*
+     * if we didn't generate enough colours to fill the set, try picking some
+     * more, randomly
+     */
+    console.log("Picked: " + differentColours.size);
+    let tries = 0;
+    // seed MPRNG for repeatable "random" results
+    srand(0);
+    while (differentColours.size < (thetaDiv * phiDiv + 2)) {
+        let [theta, phi] = randomCoords();
+        // get ray as xyz delta
+        let ray = sphericalToCartesian(d, theta, phi);
+        // translate colour along this delta into target
+        let target = [
+            lab.l + ray.x,
+            lab.a + ray.y,
+            lab.b + ray.z
+        ];
+        if (colourInRange(...target)) {
+            differentColours.add(new LAB(...target).rgb.toString());
+        }
+        // this will prevent us from locking up, bail if tried too much
+        tries++;
+        if (tries >= GIVE_UP_AFTER) {
+            break;
         }
     }
     // unpack set into array
