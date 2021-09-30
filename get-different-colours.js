@@ -16,7 +16,6 @@
  */
 
 import { RGB, LAB } from './colour-spaces.js';
-import { RAND_MAX, rand, srand } from './rand.js';
 
 /*
  * @returns 3D hypotenuse over x, y and z
@@ -70,13 +69,10 @@ function colourInRange(l, a, b) {
     );
 }
 
-// prevents lock-ups in case never find any rays
-const GIVE_UP_AFTER = 750; // double the theoretical maximum distance
-
 // Source:
 // http://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/#more-3069
 // picks n equidistant points on the face of a sphere
-function* coordsGenerator(n) {
+function* goldenSpiral(n) {
     let goldenRatio = (1 + Math.pow(5, 0.5)) / 2;
     for (let i = 0; i < n; i++) {
         let theta = 2 * Math.PI * i / goldenRatio;
@@ -85,74 +81,72 @@ function* coordsGenerator(n) {
     }
 }
 
-function randomCoords() {
-    // pick "random" co-ords
-    return [rand() / RAND_MAX * Math.PI, -Math.PI + (rand() / RAND_MAX * Math.PI * 2)];
+function* colourGenerator(origin, d, n, samples) {
+    /*
+     * do a trial run of the golden-spiral generator to work out what proportion
+     * of points on the sphere are in range
+     */
+    let pointsInRange = 0;
+    for (let [theta, phi] of goldenSpiral(samples)) {
+        // get ray as xyz delta
+        let ray = sphericalToCartesian(d, theta, phi);
+        // translate colour along this delta into target
+        let target = [
+            origin.l + ray.x,
+            origin.a + ray.y,
+            origin.b + ray.z
+        ];
+        if (colourInRange(...target)) {
+            pointsInRange++;
+        }
+    }
+    // fallback to random sampling if no points in range
+    if (pointsInRange == 0) { return; }
+    // otherwise, calculate number of samples needed to ensure n samples are taken
+    let samplesNeeded = Math.floor(n / (pointsInRange / samples));
+    // never exceed maximum samples count
+    let samplesToTake = Math.min(samplesNeeded, samples);
+    // yield colours from golden spiral generator on this modified sample size
+    for (let [theta, phi] of goldenSpiral(samplesToTake)) {
+        // get ray as xyz delta
+        let ray = sphericalToCartesian(d, theta, phi);
+        // translate colour along this delta into target
+        let target = [
+            origin.l + ray.x,
+            origin.a + ray.y,
+            origin.b + ray.z
+        ];
+        if (colourInRange(...target)) {
+            yield new LAB(...target).rgb.toString();
+        }
+    }
 }
 
 /*
  * @param c Colour to get colours different from
  * @param d Distance from c that returned colours should be
  * @param n how many colours to generate
+ * @param samples maximum number of samples to use for accurate raycasting
+ * (must be not less than n)
  * @returns null when there are no colours in range that satisfy distance d from
  * colour C
  * @returns array of values of length 0..n, with any values being string CSS
  * RGB hex colours. If length of array is 0, no colours were found before giving up.
  */
-export default function(c, d, n) {
+export default function(c, d, n, samples=n * 1000) {
+    // bail if samples < n
+    if (samples < n) { return null; }
     // copy input colour
     let rootColour = `${c}`;
     let rgb = RGB.fromString(rootColour);
     // convert to LAB
     let lab = rgb.lab;
     // check if desired distance is achievable before doing any spherical trig
-    if (!distanceAchievable(lab, d)) {
-        return null;
-    }
+    if (!distanceAchievable(lab, d)) { return null; }
     let differentColours = new Set();
-    /*
-     * cast rays from c with distance d
-     * --all rays that land in valid places are our colours
-     */
-    for (let [theta, phi] of coordsGenerator(n)) {
-        // get ray as xyz delta
-        let ray = sphericalToCartesian(d, theta, phi);
-        // translate colour along this delta into target
-        let target = [
-            lab.l + ray.x,
-            lab.a + ray.y,
-            lab.b + ray.z
-        ];
-        if (colourInRange(...target)) {
-            differentColours.add(new LAB(...target).rgb.toString());
-        }
-    }
-    /*
-     * if we didn't generate enough colours to fill the set, try picking some
-     * more, randomly
-     */
-    console.log("Picked: " + differentColours.size);
-    let tries = 0;
-    // seed MPRNG for repeatable "random" results
-    srand(0);
-    while (differentColours.size < n) {
-        let [theta, phi] = randomCoords();
-        // get ray as xyz delta
-        let ray = sphericalToCartesian(d, theta, phi);
-        // translate colour along this delta into target
-        let target = [
-            lab.l + ray.x,
-            lab.a + ray.y,
-            lab.b + ray.z
-        ];
-        if (colourInRange(...target)) {
-            differentColours.add(new LAB(...target).rgb.toString());
-        }
-        // this will prevent us from locking up, bail if tried too much
-        tries++;
-        if (tries >= GIVE_UP_AFTER) {
-            break;
-        }
+    // generate a set of colours
+    for (let colour of colourGenerator(lab, d, n, samples)) {
+        differentColours.add(colour);
     }
     // unpack set into array
     return [...differentColours];
