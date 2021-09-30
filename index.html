@@ -20,24 +20,30 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 <title>Colour Distance</title>
 <style type="text/css">
 #colour-board {
-  border: 0.5em solid grey;
+  border-collapse: collapse;
 }
 #colour-board td {
-  border: 0.75em solid;
+  border: 1.5em solid;
   /* wide and tall enough for #xxxxxx hex colour code */
-  width: 7em;
-  height: 7em;
+  width: 5em;
+  height: 5em;
   text-align: center;
 }
 .empty-colour-square {
   background-image: linear-gradient(45deg, #888888 50%, #cccccc 50%);
-  background-size: 0.5em 0.5em;
+}
+.empty-colour-square:after {
+  content: "X";
+  color: #444444;
+  font-family: monospace;
+  font-size: 4em;
 }
 /*
  * set some text with "difference" color effect applied so it
  * stands out from the background colour
  */
 #colour-board td p {
+  font-size: 1.2em;
   mix-blend-mode: difference;
   color: white;
 }
@@ -54,7 +60,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 </head>
 <body>
   <h1>Colour Distance</h1>
-  <p id="version">Version 0.1.8</p>
+  <p id="version">Version 0.1.9</p>
   <hr/>
   <p>
     A tiny web app to find colours that are a given distance away from a
@@ -98,6 +104,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         <td id="derived-colour-17" class="empty-colour-square"><p class="variable"></p></td>
         <td id="derived-colour-18" class="empty-colour-square"><p class="variable"></p></td>
         <td id="derived-colour-19" class="empty-colour-square"><p class="variable"></p></td>
+      </tr>
+      <tr>
+        <td id="derived-colour-20" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-21" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-22" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-23" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-24" class="empty-colour-square"><p class="variable"></p></td>
       </tr>
     </table>
   </p>

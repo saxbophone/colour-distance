@@ -17,7 +17,7 @@
 
 import { default as getDifferentColours } from './get-different-colours.js';
 
-const gridSize = 20;
+const gridSize = 25;
 // these global variables track our input state
 var rootColour = ''; // hex colour string
 var distance = NaN; // number
