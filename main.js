@@ -65,14 +65,22 @@ function updateColourGrid() {
             // disable placeholder background colour
             td.classList.toggle('empty-colour-square', false);
             // set background colour
-            td.style.backgroundColor = colours[i];
-            // set colour name text
-            td.firstElementChild.innerHTML = colours[i];
+            td.style.backgroundColor = colours[i].rgb.toString();
+            // set RGB colour name text
+            td.children[0].innerHTML = colours[i].rgb.toString();
+            // set wavy underline on RGB colour text if RGB is approximation of LAB
+            td.children[0].classList.toggle('inexact-colour', !colours[i].rgb.isExact);
+            // set LAB colour name text
+            td.children[1].innerHTML = colours[i].toString();
         } else {
             // enable placeholder background colour
             td.classList.toggle('empty-colour-square', true);
-            // clear colour name text
-            td.firstElementChild.innerHTML = '';
+            // clear RGB colour name text
+            td.children[0].innerHTML = '';
+            // clear wavy underline on RGB colour text
+            td.children[0].classList.toggle('inexact-colour', false);
+            // clear LAB colour name text
+            td.children[1].innerHTML = '';
         }
     }
 }

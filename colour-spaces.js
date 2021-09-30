@@ -95,16 +95,6 @@ function convertXYZForRGB(c) {
     return (c > 0.0031308) ? (1.055 * Math.pow(c, 1 / 2.4) - 0.055) : (12.92 * c);
 }
 
-// XXX: This bit (clamping) wasn't in EasyRGB's algorithm. A bit questionable.
-function clampRGB(rgb) {
-    rgb[0] = (rgb[0] > 255) ? 255 : rgb[0];
-    rgb[0] = (rgb[0] < 0) ? 0 : rgb[0];
-    rgb[1] = (rgb[1] > 255) ? 255 : rgb[1];
-    rgb[1] = (rgb[1] < 0) ? 0 : rgb[1];
-    rgb[2] = (rgb[2] > 255) ? 255 : rgb[2];
-    rgb[2] = (rgb[2] < 0) ? 0 : rgb[2];
-}
-
 // Algorithm: http://www.easyrgb.com/index.php?X=MATH&H=01#text1
 function XYZToRGB(xyz) {
     // shrink larger numbers downs
@@ -116,14 +106,11 @@ function XYZToRGB(xyz) {
     let g = x * -0.9689 + y *  1.8758 + z *  0.0415;
     let b = x *  0.0557 + y * -0.2040 + z *  1.0570;
     // convert components and upscale
-    let rgb = [
+    return [
         convertXYZForRGB(r) * 255,
         convertXYZForRGB(g) * 255,
         convertXYZForRGB(b) * 255,
     ];
-    // clamp components
-    clampRGB(rgb);
-    return rgb;
 }
 
 function LABToRGB(labArr) {
@@ -138,6 +125,10 @@ class RGB {
         this.red = r;
         this.green = g;
         this.blue = b;
+        this.isExact =
+            (0 <= Math.round(r) && Math.round(r) <= 255) &&
+            (0 <= Math.round(g) && Math.round(g) <= 255) &&
+            (0 <= Math.round(b) && Math.round(b) <= 255);
     }
 
     // parses from CSS hex colour e.g. "#rrggbb"
@@ -154,14 +145,24 @@ class RGB {
     get g() { return this.green; }
     get b() { return this.blue; }
 
+    // clamp and cast all channels to int
+    get normalised() {
+        return new RGB(
+            Math.min(255, Math.max(0, Math.round(this.red))),
+            Math.min(255, Math.max(0, Math.round(this.green))),
+            Math.min(255, Math.max(0, Math.round(this.blue)))
+        );
+    }
+
     // convert back to CSS hex colour string
     toString() {
-        // cast to int and convert each channel to string and pad if needed
-        let redString = Math.round(this.red).toString(16);
+        // normalise and convert each channel to string and pad if needed
+        let norm = this.normalised;
+        let redString = Math.round(norm.red).toString(16);
         if (redString.length == 1) { redString = '0' + redString; }
-        let greenString = Math.round(this.green).toString(16);
+        let greenString = Math.round(norm.green).toString(16);
         if (greenString.length == 1) { greenString = '0' + greenString; }
-        let blueString = Math.round(this.blue).toString(16);
+        let blueString = Math.round(norm.blue).toString(16);
         if (blueString.length == 1) { blueString = '0' + blueString; }
         return `#${redString}${greenString}${blueString}`;
     }
@@ -185,19 +186,28 @@ class LAB {
         this.bComponent = Math.min(LAB.AB_MAX_VALUE, Math.max(LAB.AB_MIN_VALUE, b));
     }
 
+    static fromHash(hash) {
+        let obj = JSON.parse(hash);
+        return new LAB(obj.lightness, obj.aComponent, obj.bComponent);
+    }
+
     get l() { return this.lightness; }
     get a() { return this.aComponent; }
     get b() { return this.bComponent; }
 
-    // XXX: for debugging only
+    // HTML output of LAB text with newlines, with values rounded
     toString() {
-        return `LAB { ${this.l}, ${this.a}, ${this.b} }`;
+        return `LAB ${Math.round(this.l)}<br/>${Math.round(this.a)}<br/>${Math.round(this.b)}`;
     }
 
     get rgb() {
         // use module-private helper function to convert
         let rgbArr = LABToRGB([this.l, this.a, this.b]);
         return new RGB(...rgbArr);
+    }
+
+    get hash() {
+        return JSON.stringify(this);
     }
 };
 
