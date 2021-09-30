@@ -81,6 +81,21 @@ function* goldenSpiral(n) {
     }
 }
 
+/*
+ * returns new LAB colour as array of units, based on origin LAB colour cast
+ * along ray described by polar coördinates (r, theta, phi)
+ */
+function castRay(origin, r, theta, phi) {
+    // get ray as xyz delta
+    let ray = sphericalToCartesian(r, theta, phi);
+    // translate colour along this delta into target
+    return [
+        origin.l + ray.x,
+        origin.a + ray.y,
+        origin.b + ray.z
+    ];
+}
+
 function* colourGenerator(origin, d, n, samples) {
     /*
      * do a trial run of the golden-spiral generator to work out what proportion
@@ -88,14 +103,7 @@ function* colourGenerator(origin, d, n, samples) {
      */
     let pointsInRange = 0;
     for (let [theta, phi] of goldenSpiral(samples)) {
-        // get ray as xyz delta
-        let ray = sphericalToCartesian(d, theta, phi);
-        // translate colour along this delta into target
-        let target = [
-            origin.l + ray.x,
-            origin.a + ray.y,
-            origin.b + ray.z
-        ];
+        let target = castRay(origin, d, theta, phi);
         if (colourInRange(...target)) {
             pointsInRange++;
         }
@@ -108,14 +116,7 @@ function* colourGenerator(origin, d, n, samples) {
     let samplesToTake = Math.min(samplesNeeded, samples);
     // yield colours from golden spiral generator on this modified sample size
     for (let [theta, phi] of goldenSpiral(samplesToTake)) {
-        // get ray as xyz delta
-        let ray = sphericalToCartesian(d, theta, phi);
-        // translate colour along this delta into target
-        let target = [
-            origin.l + ray.x,
-            origin.a + ray.y,
-            origin.b + ray.z
-        ];
+        let target = castRay(origin, d, theta, phi);
         if (colourInRange(...target)) {
             yield new LAB(...target).rgb.toString();
         }
