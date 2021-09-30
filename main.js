@@ -29,7 +29,7 @@ function updateRootColour(colour) {
 
 function updateDistance(d) {
     // TODO: validation
-    distance = parseInt(d);
+    distance = parseFloat(d);
 }
 
 function updateRootColourDisplay() {

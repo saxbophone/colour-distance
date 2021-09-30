@@ -96,6 +96,9 @@ function castRay(origin, r, theta, phi) {
     ];
 }
 
+// maximmum number of attempts to adjust the sample size to limit number of colours
+const MAX_TRIES = 5;
+
 function* colourGenerator(origin, d, n, samples) {
     /*
      * do a trial run of the golden-spiral generator to work out what proportion
@@ -111,16 +114,37 @@ function* colourGenerator(origin, d, n, samples) {
     // fallback to random sampling if no points in range
     if (pointsInRange == 0) { return; }
     // otherwise, calculate number of samples needed to ensure n samples are taken
-    let samplesNeeded = Math.floor(n / (pointsInRange / samples));
+    let samplesNeeded = Math.round(n / (pointsInRange / samples));
     // never exceed maximum samples count
     let samplesToTake = Math.min(samplesNeeded, samples);
-    // yield colours from golden spiral generator on this modified sample size
-    for (let [theta, phi] of goldenSpiral(samplesToTake)) {
-        let target = castRay(origin, d, theta, phi);
-        if (colourInRange(...target)) {
-            yield new LAB(...target).rgb.toString();
+    /*
+     * even this proportional oversample sometimes overshoots or undershoots the
+     * exact number of required colours --progressively keep refining the sample
+     * size when this happens until we no longer have excess colours
+     * --we save the results of each run in case it was exact, to prevent
+     * having to recalculate the points yet again
+     */
+    let coloursThisRun;
+    let samplesThisRun = samplesToTake;
+    let tries = 0;
+    do {
+        tries++;
+        coloursThisRun = new Set();
+        // yield colours from golden spiral generator on this modified sample size
+        for (let [theta, phi] of goldenSpiral(samplesThisRun)) {
+            let target = castRay(origin, d, theta, phi);
+            if (colourInRange(...target)) {
+                coloursThisRun.add(new LAB(...target).rgb.toString());
+            }
         }
-    }
+        // adjust sample size in case of over-shoot
+        samplesThisRun *= n / coloursThisRun.size;
+        // limit samples taken to no more than max
+        samplesThisRun = Math.min(samplesThisRun, samples);
+        // only try again if not tried too many times and there're too many colours
+    } while (tries < MAX_TRIES && coloursThisRun.size > n);
+    // now, yield all colours
+    yield* coloursThisRun;
 }
 
 /*
@@ -144,11 +168,6 @@ export default function(c, d, n, samples=n * 1000) {
     let lab = rgb.lab;
     // check if desired distance is achievable before doing any spherical trig
     if (!distanceAchievable(lab, d)) { return null; }
-    let differentColours = new Set();
-    // generate a set of colours
-    for (let colour of colourGenerator(lab, d, n, samples)) {
-        differentColours.add(colour);
-    }
-    // unpack set into array
-    return [...differentColours];
+    // generate a set of colours, unpacked from generator into an array
+    return Array.from(colourGenerator(lab, d, n, samples));
 }
