@@ -19,8 +19,9 @@ import { default as getDifferentColours } from './get-different-colours.js';
 
 const gridSize = 25;
 // these global variables track our input state
-var rootColour = ''; // hex colour string
-var distance = NaN; // number
+let rootColour = ''; // hex colour string
+let distance = NaN; // number
+let enableRGBOnly = false;
 
 function updateRootColour(colour) {
     // TODO: validation
@@ -57,7 +58,7 @@ function unlockInputs() {
 }
 
 function updateColourGrid() {
-    let colours = getDifferentColours(rootColour, distance, gridSize);
+    let colours = getDifferentColours(rootColour, enableRGBOnly, distance, gridSize);
     // XXX: this relies upon colours having gridSize elements as well as the table
     for (let i = 0; i < gridSize; i++) {
         let td = document.querySelector(`#derived-colour-${i.toString()}`);
@@ -115,6 +116,14 @@ function handleDistanceChange(event) {
     // unlockInputs();
 }
 
+function handleRGBOnlyChange(event) {
+    // lockInputs();
+    // overly pedantic boolean cast
+    enableRGBOnly = event.target.checked ? true : false;
+    updateColourGrid();
+    // unlockInputs();
+}
+
 function haveJavaScript() {
     // remove "no JavaScript" warning message
     document.querySelector('#no-javascript').remove();
@@ -126,11 +135,13 @@ function startup() {
     // grab our two input elements
     let rootColourElement = document.querySelector('#root-colour');
     let distanceElement = document.querySelector('#distance');
+    let RGBOnlyElement = document.querySelector('#enable-rgb-only');
     // assign event handlers to their input and change events
     rootColourElement.addEventListener('input', handleRootColourInput, false);
     rootColourElement.addEventListener('change', handleRootColourChange, false);
     distanceElement.addEventListener('input', handleDistanceInput, false);
     distanceElement.addEventListener('change', handleDistanceChange, false);
+    RGBOnlyElement.addEventListener('change', handleRGBOnlyChange, false);
     // enable the input elements
     unlockInputs();
     // update display of both inputs' values

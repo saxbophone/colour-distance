@@ -38,12 +38,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 .empty-colour-square {
   background-image: linear-gradient(45deg, #888888 50%, #cccccc 50%);
 }
-/*.empty-colour-square:after {
+.empty-colour-square:before {
   content: "X";
   color: #444444;
   font-family: monospace;
   font-size: 4em;
-}*/
+}
 /*
  * set some text with "difference" color effect applied so it
  * stands out from the background colour
@@ -57,7 +57,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
 #colour-picker {
   float: left;
-  width: 360px;
+  width: 17em;
+  text-align: left;
 }
 .variable {
   font-family: monospace;
@@ -68,20 +69,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 </head>
 <body>
   <h1>Colour Distance</h1>
-  <p id="version">Version 0.2.1</p>
+  <p id="version">Version 0.3.0</p>
   <hr/>
   <p>
     A tiny web app to find colours that are a given distance away from a
     specified colour, if there are any.
   </p>
   <p id="colour-picker">
-      <input type="color" id="root-colour" disabled value="#bbd8f6">
-      <span id="root-colour-hex" class="variable">#??????</span>
-      &nbsp;
-      <input type="range" id="distance" disabled min="0" max="206" step="0.01" value="100">
-      <span id="distance-value" class="variable">NaN</span>
-      <br/>
-      <span id="no-javascript" class="variable">This app requires JavaScript</span>
+    <label for="root-colour">Base Colour&nbsp;</label>
+    <input type="color" id="root-colour" disabled value="#bbd8f6">
+    <span id="root-colour-hex" class="variable">#??????</span>
+    <br/>
+    <label for="distance">Distance&nbsp;</label>
+    <input type="range" id="distance" disabled min="0" max="206" step="0.01" value="100">
+    <span id="distance-value" class="variable">NaN</span>
+    <br/>
+    <label for="enable-rgb-only">Only show displayable colours?</label>
+    <input type="checkbox" id="enable-rgb-only">
+    <br/>
+    <span id="no-javascript" class="variable">This app requires JavaScript</span>
   </p>
   <p>
     <table id="colour-board">
