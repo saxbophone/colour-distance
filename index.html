@@ -32,17 +32,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 /* TODO: use this for LAB colours which cannot be represented in RGB */
 .inexact-colour {
   text-decoration-line: underline;
-  text-decoration-style: wavy;
-  text-decoration-color: white;
+  text-decoration-style: solid;
 }
 .empty-colour-square {
   background-image: linear-gradient(45deg, #888888 50%, #cccccc 50%);
-}
-.empty-colour-square:before {
-  content: "X";
-  color: #444444;
-  font-family: monospace;
-  font-size: 4em;
 }
 /*
  * set some text with "difference" color effect applied so it
@@ -51,9 +44,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #colour-board td p {
   font-size: 0.7rem;
   mix-blend-mode: difference;
-  color: white;
   padding-right: 0.25rem;
-  margin: 0.4rem 0;
+  margin: 0;
+}
+/* only show descriptions when hovered over */
+#colour-board td p:hover {
+  text-decoration-color: white;
+  color: white;
+  mix-blend-mode: normal;
+  background-color: #0000007f;
+  border: 1px solid;
+}
+/* ...or if explicitly requested by setting class on parent element */
+.display-colour-info p {
+  text-decoration-color: white;
+  color: white;
 }
 #colour-picker {
   float: left;
@@ -72,7 +77,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 </head>
 <body>
   <h1>Colour Distance</h1>
-  <p id="version">Version 0.3.1</p>
+  <p id="version">Version 1.0.0</p>
   <hr/>
   <p>
     A tiny web app to find colours that are a given distance away from a
@@ -87,47 +92,50 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     <input type="range" id="distance" disabled min="0" max="206" step="0.01" value="100"/>
     <input type="number" id="distance-value" disabled min="0" max="206" step="0.01" class="variable"/>
     <br/>
-    <label for="enable-rgb-only">Only show displayable colours?</label>
+    <label for="enable-rgb-only">Only show displayable colours</label>
     <input type="checkbox" id="enable-rgb-only" disabled/>
+    <br/>
+    <label for="display-colour-info">Show colour IDs</label>
+    <input type="checkbox" id="display-colour-info" disabled/>
     <br/>
     <span id="no-javascript" class="variable">This app requires JavaScript</span>
   </p>
   <p>
     <table id="colour-board">
       <tr>
-        <td id="derived-colour-0" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-1" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-2" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-3" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-4" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-0" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-1" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-2" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-3" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-4" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-5" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-6" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-7" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-8" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-9" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-5" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-6" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-7" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-8" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-9" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-10" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-11" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-12" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-13" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-14" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-10" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-11" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-12" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-13" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-14" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-15" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-16" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-17" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-18" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-19" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-15" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-16" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-17" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-18" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-19" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-20" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-21" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-22" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-23" class="empty-colour-square"><p class="variable"></p><p></p></td>
-        <td id="derived-colour-24" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-20" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-21" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-22" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-23" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
+        <td id="derived-colour-24" class="empty-colour-square"><p><span class="variable"></span><br/><span></span></p></td>
       </tr>
     </table>
   </p>

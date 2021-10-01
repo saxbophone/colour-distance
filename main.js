@@ -22,6 +22,7 @@ const gridSize = 25;
 let rootColour = ''; // hex colour string
 let distance = NaN; // number
 let enableRGBOnly = false;
+let alwaysShowColourInfo = true;
 const DISTANCE_MIN = 0;
 const DISTANCE_MAX = 206;
 
@@ -58,6 +59,7 @@ function lockInputs() {
     document.querySelector('#distance').disabled = true;
     document.querySelector('#distance-value').disabled = true;
     document.querySelector('#enable-rgb-only').disabled = true;
+    document.querySelector('#display-colour-info').disabled = true;
 }
 
 function unlockInputs() {
@@ -65,6 +67,7 @@ function unlockInputs() {
     document.querySelector('#distance').disabled = false;
     document.querySelector('#distance-value').disabled = false;
     document.querySelector('#enable-rgb-only').disabled = false;
+    document.querySelector('#display-colour-info').disabled = false;
 }
 
 function updateColourGrid() {
@@ -75,23 +78,27 @@ function updateColourGrid() {
         if (colours != null && colours[i]) {
             // disable placeholder background colour
             td.classList.toggle('empty-colour-square', false);
+            // set colour info display status
+            td.classList.toggle('display-colour-info', alwaysShowColourInfo);
             // set background colour
             td.style.backgroundColor = colours[i].rgb.toString();
             // set RGB colour name text
-            td.children[0].innerHTML = colours[i].rgb.toString();
+            td.firstElementChild.children[0].innerHTML = colours[i].rgb.toString();
             // set wavy underline on RGB colour text if RGB is approximation of LAB
-            td.children[0].classList.toggle('inexact-colour', !colours[i].rgb.isExact);
+            td.firstElementChild.children[0].classList.toggle('inexact-colour', !colours[i].rgb.isExact);
             // set LAB colour name text
-            td.children[1].innerHTML = colours[i].toString();
+            td.firstElementChild.children[2].innerHTML = colours[i].toString();
         } else {
             // enable placeholder background colour
             td.classList.toggle('empty-colour-square', true);
+            // unset colour info display status
+            td.classList.toggle('display-colour-info', false);
             // clear RGB colour name text
-            td.children[0].innerHTML = '';
+            td.firstElementChild.children[0].innerHTML = 'Empty';
             // clear wavy underline on RGB colour text
-            td.children[0].classList.toggle('inexact-colour', false);
+            td.firstElementChild.children[0].classList.toggle('inexact-colour', false);
             // clear LAB colour name text
-            td.children[1].innerHTML = '';
+            td.firstElementChild.children[2].innerHTML = 'Not enough colours in range';
         }
     }
 }
@@ -147,6 +154,14 @@ function handleRGBOnlyChange(event) {
     // unlockInputs();
 }
 
+function handleDisplayColourInfoChange(event) {
+    // lockInputs();
+    // overly pedantic boolean cast
+    alwaysShowColourInfo = event.target.checked ? true : false;
+    updateColourGrid();
+    // unlockInputs();
+}
+
 function haveJavaScript() {
     // remove "no JavaScript" warning message
     document.querySelector('#no-javascript').remove();
@@ -160,6 +175,7 @@ function startup() {
     let distanceElement = document.querySelector('#distance');
     let distanceValueElement = document.querySelector('#distance-value');
     let RGBOnlyElement = document.querySelector('#enable-rgb-only');
+    let displayColourInfoElement = document.querySelector('#display-colour-info');
     // assign event handlers to their input and change events
     rootColourElement.addEventListener('input', handleRootColourInput, false);
     rootColourElement.addEventListener('change', handleRootColourChange, false);
@@ -168,11 +184,14 @@ function startup() {
     distanceValueElement.addEventListener('input', handleDistanceValueInput, false);
     distanceValueElement.addEventListener('change', handleDistanceValueChange, false);
     RGBOnlyElement.addEventListener('change', handleRGBOnlyChange, false);
+    displayColourInfoElement.addEventListener('change', handleDisplayColourInfoChange, false);
     // enable the input elements
     unlockInputs();
     // update display of both inputs' values
     rootColour = rootColourElement.value;
     distance = parseInt(distanceElement.value);
+    enableRGBOnly = RGBOnlyElement.checked ? true : false;
+    alwaysShowColourInfo = displayColourInfoElement.checked ? true : false;
     updateRootColourDisplay();
     updateDistanceDisplay();
     updateColourGridBorder();
