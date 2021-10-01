@@ -120,6 +120,11 @@ function LABToRGB(labArr) {
     return rgbArr;
 }
 
+function roundToXDecimalPlaces(n, x) {
+    let scale = Math.pow(10, x);
+    return Math.round((n + Number.EPSILON) * scale) / scale;
+}
+
 class RGB {
     constructor(r, g, b) {
         this.red = r;
@@ -195,9 +200,9 @@ class LAB {
     get a() { return this.aComponent; }
     get b() { return this.bComponent; }
 
-    // HTML output of LAB text with newlines, with values rounded
+    // HTML output of LAB text with newlines, with values rounded to 2d.p.
     toString() {
-        return `LAB ${Math.round(this.l)}<br/>${Math.round(this.a)}<br/>${Math.round(this.b)}`;
+        return `LAB ${roundToXDecimalPlaces(this.l, 2)}<br/>${roundToXDecimalPlaces(this.a, 2)}<br/>${roundToXDecimalPlaces(this.b, 2)}`;
     }
 
     get rgb() {
