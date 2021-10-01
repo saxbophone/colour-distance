@@ -22,6 +22,8 @@ const gridSize = 25;
 let rootColour = ''; // hex colour string
 let distance = NaN; // number
 let enableRGBOnly = false;
+const DISTANCE_MIN = 0;
+const DISTANCE_MAX = 206;
 
 function updateRootColour(colour) {
     // TODO: validation
@@ -29,8 +31,11 @@ function updateRootColour(colour) {
 }
 
 function updateDistance(d) {
-    // TODO: validation
-    distance = parseFloat(d);
+    // validate new value before setting it
+    let c = parseFloat(d);
+    if (!isNaN(c) && DISTANCE_MIN <= c && c <= DISTANCE_MAX) {
+        distance = c;
+    }
 }
 
 function updateRootColourDisplay() {
@@ -44,17 +49,22 @@ function updateColourGridBorder() {
 }
 
 function updateDistanceDisplay() {
-    document.querySelector('#distance-value').innerHTML = distance.toString();
+    document.querySelector('#distance').value = distance.toString();
+    document.querySelector('#distance-value').value = distance.toString();
 }
 
 function lockInputs() {
     document.querySelector('#root-colour').disabled = true;
     document.querySelector('#distance').disabled = true;
+    document.querySelector('#distance-value').disabled = true;
+    document.querySelector('#enable-rgb-only').disabled = true;
 }
 
 function unlockInputs() {
     document.querySelector('#root-colour').disabled = false;
     document.querySelector('#distance').disabled = false;
+    document.querySelector('#distance-value').disabled = false;
+    document.querySelector('#enable-rgb-only').disabled = false;
 }
 
 function updateColourGrid() {
@@ -116,6 +126,19 @@ function handleDistanceChange(event) {
     // unlockInputs();
 }
 
+function handleDistanceValueInput(event) {
+    updateDistance(event.target.value);
+    updateColourGrid();
+}
+
+function handleDistanceValueChange(event) {
+    // lockInputs();
+    updateDistance(event.target.value);
+    updateDistanceDisplay();
+    updateColourGrid();
+    // unlockInputs();
+}
+
 function handleRGBOnlyChange(event) {
     // lockInputs();
     // overly pedantic boolean cast
@@ -135,12 +158,15 @@ function startup() {
     // grab our two input elements
     let rootColourElement = document.querySelector('#root-colour');
     let distanceElement = document.querySelector('#distance');
+    let distanceValueElement = document.querySelector('#distance-value');
     let RGBOnlyElement = document.querySelector('#enable-rgb-only');
     // assign event handlers to their input and change events
     rootColourElement.addEventListener('input', handleRootColourInput, false);
     rootColourElement.addEventListener('change', handleRootColourChange, false);
     distanceElement.addEventListener('input', handleDistanceInput, false);
     distanceElement.addEventListener('change', handleDistanceChange, false);
+    distanceValueElement.addEventListener('input', handleDistanceValueInput, false);
+    distanceValueElement.addEventListener('change', handleDistanceValueChange, false);
     RGBOnlyElement.addEventListener('change', handleRGBOnlyChange, false);
     // enable the input elements
     unlockInputs();

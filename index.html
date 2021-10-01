@@ -57,8 +57,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
 #colour-picker {
   float: left;
-  width: 17em;
+  width: 19em;
   text-align: left;
+}
+#distance-value {
+  width: 5em;
 }
 .variable {
   font-family: monospace;
@@ -69,7 +72,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 </head>
 <body>
   <h1>Colour Distance</h1>
-  <p id="version">Version 0.3.0</p>
+  <p id="version">Version 0.3.1</p>
   <hr/>
   <p>
     A tiny web app to find colours that are a given distance away from a
@@ -77,15 +80,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   </p>
   <p id="colour-picker">
     <label for="root-colour">Base Colour&nbsp;</label>
-    <input type="color" id="root-colour" disabled value="#bbd8f6">
+    <input type="color" id="root-colour" disabled value="#bbd8f6"/>
     <span id="root-colour-hex" class="variable">#??????</span>
     <br/>
     <label for="distance">Distance&nbsp;</label>
-    <input type="range" id="distance" disabled min="0" max="206" step="0.01" value="100">
-    <span id="distance-value" class="variable">NaN</span>
+    <input type="range" id="distance" disabled min="0" max="206" step="0.01" value="100"/>
+    <input type="number" id="distance-value" disabled min="0" max="206" step="0.01" class="variable"/>
     <br/>
     <label for="enable-rgb-only">Only show displayable colours?</label>
-    <input type="checkbox" id="enable-rgb-only">
+    <input type="checkbox" id="enable-rgb-only" disabled/>
     <br/>
     <span id="no-javascript" class="variable">This app requires JavaScript</span>
   </p>
