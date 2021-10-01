@@ -23,11 +23,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   border-collapse: collapse;
 }
 #colour-board td {
-  border: 1.5em solid;
+  border: 1.5rem solid;
   /* wide and tall enough for #xxxxxx hex colour code */
-  width: 5em;
-  height: 5em;
-  text-align: center;
+  width: 5rem;
+  height: 5rem;
+  text-align: right;
 }
 /* TODO: use this for LAB colours which cannot be represented in RGB */
 .inexact-colour {
@@ -38,20 +38,22 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 .empty-colour-square {
   background-image: linear-gradient(45deg, #888888 50%, #cccccc 50%);
 }
-.empty-colour-square:after {
+/*.empty-colour-square:after {
   content: "X";
   color: #444444;
   font-family: monospace;
   font-size: 4em;
-}
+}*/
 /*
  * set some text with "difference" color effect applied so it
  * stands out from the background colour
  */
 #colour-board td p {
-  font-size: 1.2em;
+  font-size: 0.7rem;
   mix-blend-mode: difference;
   color: white;
+  padding-right: 0.25rem;
+  margin: 0.4rem 0;
 }
 #colour-picker {
   float: left;
@@ -59,14 +61,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
 .variable {
   font-family: monospace;
-  font-size: 1.4em;
+  font-size: 1.05rem !important;
 }
 </style>
 <script type="module" src="main.js"></script>
 </head>
 <body>
   <h1>Colour Distance</h1>
-  <p id="version">Version 0.1.10</p>
+  <p id="version">Version 0.2.0</p>
   <hr/>
   <p>
     A tiny web app to find colours that are a given distance away from a
@@ -84,39 +86,39 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   <p>
     <table id="colour-board">
       <tr>
-        <td id="derived-colour-0" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-1" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-2" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-3" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-4" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-0" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-1" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-2" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-3" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-4" class="empty-colour-square"><p class="variable"></p><p></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-5" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-6" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-7" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-8" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-9" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-5" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-6" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-7" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-8" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-9" class="empty-colour-square"><p class="variable"></p><p></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-10" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-11" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-12" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-13" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-14" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-10" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-11" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-12" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-13" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-14" class="empty-colour-square"><p class="variable"></p><p></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-15" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-16" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-17" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-18" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-19" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-15" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-16" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-17" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-18" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-19" class="empty-colour-square"><p class="variable"></p><p></p></td>
       </tr>
       <tr>
-        <td id="derived-colour-20" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-21" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-22" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-23" class="empty-colour-square"><p class="variable"></p></td>
-        <td id="derived-colour-24" class="empty-colour-square"><p class="variable"></p></td>
+        <td id="derived-colour-20" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-21" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-22" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-23" class="empty-colour-square"><p class="variable"></p><p></p></td>
+        <td id="derived-colour-24" class="empty-colour-square"><p class="variable"></p><p></p></td>
       </tr>
     </table>
   </p>

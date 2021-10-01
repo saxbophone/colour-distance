@@ -134,7 +134,7 @@ function* colourGenerator(origin, d, n, samples) {
         for (let [theta, phi] of goldenSpiral(samplesThisRun)) {
             let target = castRay(origin, d, theta, phi);
             if (colourInRange(...target)) {
-                coloursThisRun.add(new LAB(...target).rgb.toString());
+                coloursThisRun.add(new LAB(...target).hash);
             }
         }
         // adjust sample size in case of over-shoot
@@ -143,8 +143,10 @@ function* colourGenerator(origin, d, n, samples) {
         samplesThisRun = Math.min(samplesThisRun, samples);
         // only try again if not tried too many times and there're too many colours
     } while (tries < MAX_TRIES && coloursThisRun.size > n);
-    // now, yield all colours
-    yield* coloursThisRun;
+    // now, unhash each colour in turn and yield it
+    for (let c of coloursThisRun) {
+        yield LAB.fromHash(c);
+    }
 }
 
 /*
