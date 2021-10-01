@@ -61,12 +61,18 @@ function sphericalToCartesian(r, theta, phi) {
     };
 }
 
-function colourInRange(l, a, b) {
-    return (
-        LAB.L_MIN_VALUE <= l && l <= LAB.L_MAX_VALUE &&
-        LAB.AB_MIN_VALUE <= a && a <= LAB.AB_MAX_VALUE &&
-        LAB.AB_MIN_VALUE <= b && b <= LAB.AB_MAX_VALUE
-    );
+function colourInRange(rgbOnly, l, a, b) {
+    if (rgbOnly) {
+        // convert to RGB and check if in RGB gamut
+        return new LAB(l, a, b).rgb.isExact;
+    } else {
+        // otherwise check it's in the LAB gamut
+        return (
+            LAB.L_MIN_VALUE <= l && l <= LAB.L_MAX_VALUE &&
+            LAB.AB_MIN_VALUE <= a && a <= LAB.AB_MAX_VALUE &&
+            LAB.AB_MIN_VALUE <= b && b <= LAB.AB_MAX_VALUE
+        );
+    }
 }
 
 // Source:
@@ -99,7 +105,7 @@ function castRay(origin, r, theta, phi) {
 // maximmum number of attempts to adjust the sample size to limit number of colours
 const MAX_TRIES = 5;
 
-function* colourGenerator(origin, d, n, samples) {
+function* colourGenerator(origin, rgbOnly, d, n, samples) {
     /*
      * do a trial run of the golden-spiral generator to work out what proportion
      * of points on the sphere are in range
@@ -107,7 +113,7 @@ function* colourGenerator(origin, d, n, samples) {
     let pointsInRange = 0;
     for (let [theta, phi] of goldenSpiral(samples)) {
         let target = castRay(origin, d, theta, phi);
-        if (new LAB(...target).rgb.isExact) {
+        if (colourInRange(rgbOnly, ...target)) {
             pointsInRange++;
         }
     }
@@ -133,7 +139,7 @@ function* colourGenerator(origin, d, n, samples) {
         // yield colours from golden spiral generator on this modified sample size
         for (let [theta, phi] of goldenSpiral(samplesThisRun)) {
             let target = castRay(origin, d, theta, phi);
-            if (new LAB(...target).rgb.isExact) {
+            if (colourInRange(rgbOnly, ...target)) {
                 coloursThisRun.add(new LAB(...target).hash);
             }
         }
@@ -151,6 +157,8 @@ function* colourGenerator(origin, d, n, samples) {
 
 /*
  * @param c Colour to get colours different from
+ * @param rgbOnly Whether to only return colours that are within the RGB gamut
+ * or not.
  * @param d Distance from c that returned colours should be
  * @param n how many colours to generate
  * @param samples maximum number of samples to use for accurate raycasting
@@ -160,7 +168,7 @@ function* colourGenerator(origin, d, n, samples) {
  * @returns array of values of length 0..n, with any values being string CSS
  * RGB hex colours. If length of array is 0, no colours were found before giving up.
  */
-export default function(c, d, n, samples=n * 1000) {
+export default function(c, rgbOnly, d, n, samples=n * 1000) {
     // bail if samples < n
     if (samples < n) { return null; }
     // copy input colour
@@ -171,5 +179,5 @@ export default function(c, d, n, samples=n * 1000) {
     // check if desired distance is achievable before doing any spherical trig
     if (!distanceAchievable(lab, d)) { return null; }
     // generate a set of colours, unpacked from generator into an array
-    return Array.from(colourGenerator(lab, d, n, samples));
+    return Array.from(colourGenerator(lab, rgbOnly, d, n, samples));
 }
