@@ -107,7 +107,7 @@ function* colourGenerator(origin, d, n, samples) {
     let pointsInRange = 0;
     for (let [theta, phi] of goldenSpiral(samples)) {
         let target = castRay(origin, d, theta, phi);
-        if (colourInRange(...target)) {
+        if (new LAB(...target).rgb.isExact) {
             pointsInRange++;
         }
     }
@@ -133,7 +133,7 @@ function* colourGenerator(origin, d, n, samples) {
         // yield colours from golden spiral generator on this modified sample size
         for (let [theta, phi] of goldenSpiral(samplesThisRun)) {
             let target = castRay(origin, d, theta, phi);
-            if (colourInRange(...target)) {
+            if (new LAB(...target).rgb.isExact) {
                 coloursThisRun.add(new LAB(...target).hash);
             }
         }
